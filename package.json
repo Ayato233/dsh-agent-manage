@@ -1,0 +1,21 @@
+{
+  "name": "@ayato233/dsh-agent-manage",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "description": "DSH 独立管理插件：全局人设注入 + MCP 动态管理 + Skill 管理（host 半体接口 /agent-manage/* + client 三个设置分区）",
+  "dsh": {
+    "client": {
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime"
+      ],
+      "platform": "web"
+    }
+  }
+}
