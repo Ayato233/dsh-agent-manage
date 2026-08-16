@@ -1,6 +1,6 @@
 # dsh-agent-manage
 
-DSH（DeepSeek Harness / Bigfish）独立管理插件：**全局人设注入 + Skill 管理 + MCP 动态管理**。
+DSH（DeepSeek Harness）独立管理插件：**全局人设注入 + Skill 管理 + MCP 动态管理**。
 host 半体提供 `/agent-manage/*` HTTP 接口，client 半体在官方设置面板注册「全局人设 / 技能管理 / MCP 管理」三个分区。
 
 > 私有插件（`"private": true`），未发布 npm。
@@ -26,7 +26,7 @@ lib/client.js  client 半体：注入 @deepseek-ai/dsh-client-runtime/client，�
 
 ### 前置条件
 
-- 已安装 DSH（Bigfish），profile 目录为 `~/.dsh/profiles/web`（默认）
+- 已安装 DSH（cordis 运行时），插件安装于主目录 `~/.dsh` 下
 - 全局数据目录 `~/.dsh/` 可写（插件读写 `global-persona.md` / `skills/` / `mcp-servers.json`）
 
 ### 安装步骤
@@ -34,9 +34,9 @@ lib/client.js  client 半体：注入 @deepseek-ai/dsh-client-runtime/client，�
 1. **拷贝插件到安装位置**（从仓库拷贝 `lib/` 与 `package.json`）：
 
 ```powershell
-# 在仓库根目录执行
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage" | Out-Null
-Copy-Item lib\index.js, lib\client.js, package.json "$env:USERPROFILE\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\" -Force
+# 在仓库根目录执行（$HOME = 用户主目录）
+New-Item -ItemType Directory -Force "$HOME\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage" | Out-Null
+Copy-Item lib\index.js, lib\client.js, package.json "$HOME\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\" -Force
 ```
 
 2. **挂载**：在 `~/.dsh/profiles/web/cordis.patch.yml` 中追加：
@@ -47,7 +47,7 @@ Copy-Item lib\index.js, lib\client.js, package.json "$env:USERPROFILE\.dsh\profi
       name: '@ayato233/dsh-agent-manage'
 ```
 
-3. **重启 Bigfish** 生效。
+3. **重启 DSH** 生效。
 
 ### 验证
 
@@ -55,6 +55,7 @@ Copy-Item lib\index.js, lib\client.js, package.json "$env:USERPROFILE\.dsh\profi
 - host 接口可访问：
 
 ```powershell
+# DSH Web 服务默认端口 12652（如已改端口请替换）
 Invoke-RestMethod http://127.0.0.1:12652/agent-manage/persona
 # 预期返回 { ok: true, content: "<全局人设内容>" }
 ```
@@ -65,16 +66,16 @@ Invoke-RestMethod http://127.0.0.1:12652/agent-manage/persona
 # 1. 修改源码（lib/）后做语法检查
 node --check lib/index.js && node --check lib/client.js
 # 2. 拷贝到安装位置
-copy lib\index.js  %USERPROFILE%\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\lib\
-copy lib\client.js %USERPROFILE%\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\lib\
-# 3. 重启 Bigfish 生效
+copy lib\index.js  $HOME\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\lib\
+copy lib\client.js $HOME\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\lib\
+# 3. 重启 DSH 生效
 ```
 
 ### 卸载
 
 1. 移除 `cordis.patch.yml` 中的 `dsh-agent-manage` insert 段；
 2. 删除安装目录 `~/.dsh/profiles/web/node_modules/@ayato233/dsh-agent-manage`；
-3. 重启 Bigfish。插件管理的三个数据文件（`global-persona.md` / `skills/` / `mcp-servers.json`）默认保留，不会随卸载删除。
+3. 重启 DSH。插件管理的三个数据文件（`global-persona.md` / `skills/` / `mcp-servers.json`）默认保留，不会随卸载删除。
 
 ## HTTP API（host 半体）
 
