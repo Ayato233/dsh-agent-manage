@@ -22,10 +22,24 @@ lib/index.js   host 半体：inject [webServer]，挂 /agent-manage/* 路由，�
 lib/client.js  client 半体：注入 @deepseek-ai/dsh-client-runtime/client，注册设置面板三分区（样式走官方 --dsw-* 变量，主题感知）
 ```
 
-## 安装与挂载
+## 安装
 
-- 安装位置：`~/.dsh/profiles/web/node_modules/@ayato233/dsh-agent-manage`（源码构建拷贝，与仓库哈希一致）
-- 挂载配置：`~/.dsh/profiles/web/cordis.patch.yml`
+### 前置条件
+
+- 已安装 DSH（Bigfish），profile 目录为 `~/.dsh/profiles/web`（默认）
+- 全局数据目录 `~/.dsh/` 可写（插件读写 `global-persona.md` / `skills/` / `mcp-servers.json`）
+
+### 安装步骤
+
+1. **拷贝插件到安装位置**（从仓库拷贝 `lib/` 与 `package.json`）：
+
+```powershell
+# 在仓库根目录执行
+New-Item -ItemType Directory -Force "$env:USERPROFILE\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage" | Out-Null
+Copy-Item lib\index.js, lib\client.js, package.json "$env:USERPROFILE\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\" -Force
+```
+
+2. **挂载**：在 `~/.dsh/profiles/web/cordis.patch.yml` 中追加：
 
 ```yaml
 - insert:
@@ -33,7 +47,19 @@ lib/client.js  client 半体：注入 @deepseek-ai/dsh-client-runtime/client，�
       name: '@ayato233/dsh-agent-manage'
 ```
 
-### 更新流程
+3. **重启 Bigfish** 生效。
+
+### 验证
+
+- 设置面板出现「全局人设 / 技能管理 / MCP 管理」三个分区；
+- host 接口可访问：
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:12652/agent-manage/persona
+# 预期返回 { ok: true, content: "<全局人设内容>" }
+```
+
+### 更新
 
 ```bash
 # 1. 修改源码（lib/）后做语法检查
@@ -43,6 +69,12 @@ copy lib\index.js  %USERPROFILE%\.dsh\profiles\web\node_modules\@ayato233\dsh-ag
 copy lib\client.js %USERPROFILE%\.dsh\profiles\web\node_modules\@ayato233\dsh-agent-manage\lib\
 # 3. 重启 Bigfish 生效
 ```
+
+### 卸载
+
+1. 移除 `cordis.patch.yml` 中的 `dsh-agent-manage` insert 段；
+2. 删除安装目录 `~/.dsh/profiles/web/node_modules/@ayato233/dsh-agent-manage`；
+3. 重启 Bigfish。插件管理的三个数据文件（`global-persona.md` / `skills/` / `mcp-servers.json`）默认保留，不会随卸载删除。
 
 ## HTTP API（host 半体）
 
