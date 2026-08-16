@@ -3,11 +3,10 @@
 DSH（DeepSeek Harness）独立管理插件：**全局人设注入 + Skill 管理 + MCP 动态管理**。
 host 半体提供 `/agent-manage/*` HTTP 接口，client 半体在官方设置面板注册「全局人设 / 技能管理 / MCP 管理」三个分区。
 
-> 私有插件（`"private": true`），未发布 npm。
 
 ## 出处
 
-本插件修改自 **dsh-vscode-layout** 项目（2026-08）：抽离其管理功能（全局人设注入 / Skill 管理 / MCP 管理）独立成插件。原包名 `@anoslide/dsh-host-manage`，后更名 `@ayato233/dsh-agent-manage`，路由前缀 `/vscode-manage/*` 同步改为 `/agent-manage/*`（与已废弃的布局文件路由 `/vscode-files` 分开，避免将来恢复布局时 webServer 路由冲突）。
+本插件修改自 **dsh-vscode-layout** 项目（2026-08）：抽离其管理功能（全局人设注入 / Skill 管理 / MCP 管理）独立成插件。原包名 `@anoslide/dsh-host-manage`，后更名 `@ayato233/dsh-agent-manage`，路由前缀 `/vscode-manage/*` 同步改为 `/agent-manage/*`。
 
 ## 功能特性
 
